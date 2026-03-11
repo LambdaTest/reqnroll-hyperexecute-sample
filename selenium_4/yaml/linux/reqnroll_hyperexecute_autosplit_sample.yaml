@@ -1,0 +1,51 @@
+---
+version: 0.1
+
+runson: linux
+
+retryOnFailure: true
+maxRetries: 1
+
+autosplit: true
+
+runtime:
+  language: dotnet
+  version: "8.0"
+
+concurrency: 4
+
+pre:
+ - dotnet build
+ - dotnet --version
+ 
+cacheKey: '{{ checksum "packages.txt" }}'
+
+post:
+  - cat yaml/linux/reqnroll_hyperexecute_autosplit_sample.yaml
+
+mergeArtifacts: true
+
+uploadArtefacts:
+ - name: Execution_Report
+   path:
+    - Report/**
+    - Reports/**
+ - name: Execution_Screenshots
+   path:
+    - Screenshots/**/**
+    - Reports/**/Screenshots/**
+
+report: true
+partialReports:
+  location: Report/
+  type: html
+  frameworkName: reqnroll
+  
+testDiscovery:
+  type: raw
+  mode: dynamic
+  command: grep -rni 'Features' -e '@' --include=\*.feature | sed 's/.*@//'
+
+testRunnerCommand: dotnet test --logger "console;verbosity=detailed" --filter "(Category=$test)"
+
+jobLabel: [selenium-reqnroll, linux, autosplit]

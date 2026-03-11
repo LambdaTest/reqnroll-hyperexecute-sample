@@ -1,0 +1,56 @@
+---
+version: 0.1
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+runson: linux
+
+retryOnFailure: true
+maxRetries: 1
+concurrency: 4
+
+runtime:
+  language: dotnet
+  version: "8.0"
+
+env:
+  NUGET_PACKAGES: '/home/ltuser/.nuget/packages/'
+  NUGET_HTTP_CACHE_PATH: '/home/ltuser/.local/share/NuGet/v3-cache'
+  NUGET_PLUGINS_CACHE_PATH: '/home/ltuser/.local/share/NuGet/plugins-cache'
+
+matrix:
+  project: ["reqnroll.cloud.sln"]
+  scenario: ["searchItems-1", "searchItems-2", "searchItems-3", "api"]
+
+pre:
+ - dotnet build -c Release
+
+# Dependency caching for Windows
+cacheKey: '{{ checksum "reqnroll.cloud.csproj" }}'
+
+post:
+  - cat yaml/linux/reqnroll_hyperexecute_matrix_sample.yaml
+
+mergeArtifacts: true
+
+uploadArtefacts:
+ - name: Execution_Report
+   path:
+    - Report/**
+    - Reports/**
+ - name: Execution_Screenshots
+   path:
+    - Screenshots/**/**
+    - Reports/**/Screenshots/**
+
+report: true
+partialReports:
+  location: Report
+  type: html
+  frameworkName: reqnroll
+
+testSuites:
+  - dotnet test --logger "console;verbosity=detailed" $project --filter "(Category=$scenario)"
+
+jobLabel: [selenium-reqnroll, linux, matrix]

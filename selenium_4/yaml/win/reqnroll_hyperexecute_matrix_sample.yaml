@@ -1,0 +1,56 @@
+---
+version: 0.1
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+runson: win
+
+retryOnFailure: true
+maxRetries: 1
+concurrency: 4
+
+env:
+  NUGET_PACKAGES: 'C:\nuget_global_cache'
+  NUGET_HTTP_CACHE_PATH: 'C:\nuget_http_cache'
+  NUGET_PLUGINS_CACHE_PATH: 'C:\nuget_plugins_cache'
+
+matrix:
+  project: ["reqnroll.cloud.sln"]
+  #Parallel execution at feature level
+  scenario: ["searchItems-1", "searchItems-2", "searchItems-3", "api"]
+
+pre:
+ - dotnet build -c Release
+
+# Dependency caching for Windows
+cacheKey: '{{ checksum "reqnroll.cloud.csproj" }}'
+
+post:
+  - cat yaml/win/reqnroll_hyperexecute_matrix_sample.yaml
+
+mergeArtifacts: true
+
+uploadArtefacts:
+ - name: Execution_Report
+   path:
+    - Report/**
+    - Reports/**
+ - name: Execution_Screenshots
+   path:
+    - Screenshots/**/**
+    - Reports/**/Screenshots/**
+
+report: true
+partialReports:
+  location: Report
+  type: html
+  frameworkName: reqnroll
+
+#Parallel execution at feature level
+#testSuites:
+#  - dotnet test $project --filter Name~$feature
+testSuites:
+  - dotnet test --logger "console;verbosity=detailed" $project --filter "(Category=$scenario)"
+
+jobLabel: [selenium-reqnroll, win, matrix]
