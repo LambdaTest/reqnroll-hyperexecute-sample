@@ -4,8 +4,8 @@ HyperExecute is a smart test orchestration platform to run end-to-end Selenium t
 
 The overall experience helps teams test code and fix issues at a much faster pace. HyperExecute is configured using a YAML file. Instead of moving the Hub close to you, HyperExecute brings the test scripts close to the Hub!
 
-* <b>HyperExecute HomePage</b>: https://www.lambdatest.com/hyperexecute
-* <b>TestMu AI HomePage</b>: https://www.lambdatest.com
+* <b>HyperExecute HomePage</b>: https://www.testmuai.com/hyperexecute/
+* <b>TestMu AI HomePage</b>: https://www.testmuai.com/
 * <b>TestMu AI Support</b>: [support@lambdatest.com](mailto:support@lambdatest.com)
 
 To know more about how HyperExecute does intelligent Test Orchestration, do check out [HyperExecute Getting Started Guide](https://www.lambdatest.com/support/docs/getting-started-with-hyperexecute/)
